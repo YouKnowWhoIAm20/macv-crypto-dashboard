@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
+// ✅ Fix: use valid context type directly instead of destructuring
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const { id } = params;
+  const id = context.params.id;
   const apiKey = process.env.COINGECKO_API_KEY;
 
   if (!id || !apiKey) {
