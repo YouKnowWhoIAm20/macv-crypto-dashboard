@@ -17,7 +17,7 @@ type CoinData = {
 };
 
 export default function CoinPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params); // ✅ unwrap Promise
+  const { id } = use(params); // ✅ unwrap the route param
 
   const [coin, setCoin] = useState<CoinData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,13 +27,7 @@ export default function CoinPage({ params }: { params: Promise<{ id: string }> }
   useEffect(() => {
     const fetchCoin = async () => {
       try {
-        const res = await fetch(`https://api.coingecko.com/api/v3/coins/${id}`, {
-          headers: {
-            Accept: 'application/json',
-            'x-cg-demo-api-key': process.env.NEXT_PUBLIC_COINGECKO_API_KEY!,
-          },
-        });
-
+        const res = await fetch(`/api/coin/${id}`); // ✅ use internal API route
         if (!res.ok) throw new Error('Failed to fetch coin');
         const data = await res.json();
         setCoin(data);
@@ -77,12 +71,8 @@ export default function CoinPage({ params }: { params: Promise<{ id: string }> }
       </div>
 
       <div className="space-y-2 text-lg text-gray-800">
-        <p>
-          <strong>Price:</strong> ${coin.market_data.current_price.usd.toLocaleString()}
-        </p>
-        <p>
-          <strong>Market Cap:</strong> ${coin.market_data.market_cap.usd.toLocaleString()}
-        </p>
+        <p><strong>Price:</strong> ${coin.market_data.current_price.usd.toLocaleString()}</p>
+        <p><strong>Market Cap:</strong> ${coin.market_data.market_cap.usd.toLocaleString()}</p>
         <p>
           <strong>24h Change:</strong>{' '}
           <span
@@ -107,6 +97,7 @@ export default function CoinPage({ params }: { params: Promise<{ id: string }> }
         />
       </div>
 
+      {/* ✅ Price Chart Section */}
       <div className="mt-10">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold">Price Chart</h2>
