@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import type { NextApiRequest } from 'next';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(
   req: NextRequest,
-  context: any // 👈 using 'any' to satisfy Vercel build — confirmed workaround
+  { params }: { params: { id: string } }
 ) {
-  const id = context?.params?.id;
+  const id = params.id;
   const apiKey = process.env.COINGECKO_API_KEY;
 
   if (!id || !apiKey) {
@@ -22,12 +23,14 @@ export async function GET(
     });
 
     if (!res.ok) {
-      return NextResponse.json({ error: 'CoinGecko API error' }, { status: res.status });
+      console.error('CoinGecko error:', res.status);
+      return NextResponse.json({ error: 'Failed to fetch from CoinGecko' }, { status: res.status });
     }
 
     const data = await res.json();
     return NextResponse.json(data);
   } catch (error) {
+    console.error('Unexpected error:', error);
     return NextResponse.json({ error: 'Unexpected error' }, { status: 500 });
   }
 }
