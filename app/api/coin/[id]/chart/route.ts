@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const revalidate = 10;
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const id = params.id;
+export async function GET(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
+  const id = context.params.id;
   const days = req.nextUrl.searchParams.get('days') || '7';
   const apiKey = process.env.COINGECKO_API_KEY;
 
@@ -18,8 +21,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         headers: {
           Accept: 'application/json',
           'x-cg-demo-api-key': apiKey,
-        },
-        // ❌ remove: next: { revalidate: 10 }
+        }
       }
     );
 
