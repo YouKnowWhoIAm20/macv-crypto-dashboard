@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const revalidate = 10;
 
+// ✅ Must be exported with this exact param typing
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Record<string, string> }
 ) {
-  const id = params.id;
+  const id = context.params.id;
   const days = req.nextUrl.searchParams.get('days') || '7';
   const apiKey = process.env.COINGECKO_API_KEY;
 
@@ -31,7 +32,7 @@ export async function GET(
 
     const data = await res.json();
     return NextResponse.json(data);
-  } catch {
+  } catch (err) {
     return NextResponse.json({ error: 'Unexpected error' }, { status: 500 });
   }
 }
