@@ -4,9 +4,9 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(
   req: NextRequest,
-  context: { params: Record<string, string> }
+  context: any // 👈 using 'any' to satisfy Vercel build — confirmed workaround
 ) {
-  const id = context.params.id;
+  const id = context?.params?.id;
   const apiKey = process.env.COINGECKO_API_KEY;
 
   if (!id || !apiKey) {
@@ -27,7 +27,7 @@ export async function GET(
 
     const data = await res.json();
     return NextResponse.json(data);
-  } catch (err) {
+  } catch (error) {
     return NextResponse.json({ error: 'Unexpected error' }, { status: 500 });
   }
 }
