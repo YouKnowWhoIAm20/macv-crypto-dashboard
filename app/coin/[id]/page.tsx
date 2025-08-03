@@ -1,7 +1,6 @@
 // app/coin/[id]/page.tsx
 'use client';
-import React, { useEffect, useState } from 'react';
-import { use } from 'react';
+import React, { useEffect, useState, use } from 'react';
 import PriceChart from '@/components/PriceChart';
 
 type CoinData = {
@@ -18,16 +17,23 @@ type CoinData = {
 };
 
 export default function CoinPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params); // ✅ unwrap the params Promise
+  const { id } = use(params); // ✅ unwrap Promise
+
   const [coin, setCoin] = useState<CoinData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [chartDays, setChartDays] = useState(7); // ✅ added state for chart range
+  const [chartDays, setChartDays] = useState(7);
 
   useEffect(() => {
     const fetchCoin = async () => {
       try {
-        const res = await fetch(`/api/coin/${id}`);
+        const res = await fetch(`https://api.coingecko.com/api/v3/coins/${id}`, {
+          headers: {
+            Accept: 'application/json',
+            'x-cg-demo-api-key': process.env.NEXT_PUBLIC_COINGECKO_API_KEY!,
+          },
+        });
+
         if (!res.ok) throw new Error('Failed to fetch coin');
         const data = await res.json();
         setCoin(data);
@@ -96,13 +102,11 @@ export default function CoinPage({ params }: { params: Promise<{ id: string }> }
         <div
           className="prose prose-sm text-gray-700 max-w-none"
           dangerouslySetInnerHTML={{
-            __html:
-              coin.description.en?.split('. ')[0] || 'No description available.',
+            __html: coin.description.en?.split('. ')[0] || 'No description available.',
           }}
         />
       </div>
 
-      {/* ✅ Price Chart Section */}
       <div className="mt-10">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold">Price Chart</h2>
