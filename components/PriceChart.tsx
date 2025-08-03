@@ -6,7 +6,7 @@ import {
 
 interface PriceChartProps {
   coinId: string;
-  days: number; // 1, 7, 30, 90
+  days: number;
 }
 
 const PriceChart: React.FC<PriceChartProps> = ({ coinId, days }) => {
@@ -17,7 +17,14 @@ const PriceChart: React.FC<PriceChartProps> = ({ coinId, days }) => {
     const fetchChartData = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/coin/${coinId}/chart?days=${days}`);
+        const res = await fetch(
+          `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}`
+        );
+
+        if (!res.ok) {
+          throw new Error(`Fetch failed with status ${res.status}`);
+        }
+
         const json = await res.json();
 
         if (Array.isArray(json?.prices)) {
