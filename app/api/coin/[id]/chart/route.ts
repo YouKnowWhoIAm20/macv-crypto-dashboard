@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export const revalidate = 10;
+// ✅ Use this type for the second argument in app/api
+// Define the context type for route handlers in the app directory
+type Context = { params: { id: string } };
 
+export const revalidate = 10;
 export async function GET(
   req: NextRequest,
-  context: { params: { id: string } }
+  context: Context
 ) {
-  const id = context.params.id;
+  const id = context.params?.id;
   const days = req.nextUrl.searchParams.get('days') || '7';
   const apiKey = process.env.COINGECKO_API_KEY;
 
