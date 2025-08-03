@@ -1,16 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { NextApiRequest } from 'next';
-
-// ✅ Use RouteContext type from Next.js
-type RouteContext = {
-  params: {
-    id: string;
-  };
-};
 
 export const revalidate = 10;
 
-export async function GET(req: NextRequest, { params }: RouteContext) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const id = params.id;
   const days = req.nextUrl.searchParams.get('days') || '7';
   const apiKey = process.env.COINGECKO_API_KEY;
